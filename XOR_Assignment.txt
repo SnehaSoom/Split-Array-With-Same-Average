@@ -1,0 +1,29 @@
+const sm = (a) => a.reduce(((x, y) => x + y), 0);
+const initializeGraphSet = (n) => { let g = []; for (let i = 0; i < n; i++) { g.push(new Set()); } return g; };
+
+const splitArraySameAverage = (a) => {
+    a.sort((x, y) => x - y);
+    let n = a.length, ok = false, tsum = sm(a);
+    for (let i = 1; i * 2 <= n; i++) {
+        if (tsum * i % n == 0) {
+            ok = true;
+            break;
+        }
+    }
+    if (!ok) return false;
+    let dp = initializeGraphSet((n >> 1) + 1);
+    dp[0].add(0);
+    for (const x of a) {
+        for (let i = n >> 1; i >= 1; i--) {
+            for (const pre of dp[i - 1]) {
+                dp[i].add(pre + x);
+            }
+        }
+    }
+    for (let i = 1; i * 2 <= n; i++) {
+        if (tsum * i % n == 0) {
+            if (dp[i].has(tsum * i / n)) return true;
+        }
+    }
+    return false;
+}
